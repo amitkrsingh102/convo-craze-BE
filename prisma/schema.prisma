@@ -1,0 +1,43 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("DATABASE_URL")
+// }
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+model User {
+  id           String   @id @default(uuid())
+  userName     String
+  email        String   @unique
+  password     String
+  avatarImage  Int      @default(30)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  onlineStatus Boolean  @default(false)
+
+  sentMessages     Message[] @relation("sentMessages")
+  receivedMessages Message[] @relation("receivedMessages")
+}
+
+model Message {
+  id     String   @id @default(uuid())
+  text   String
+  sendAt DateTime @default(now())
+
+  sender   User @relation(name: "sentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation(name: "receivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  senderId   String
+  receiverId String
+}
