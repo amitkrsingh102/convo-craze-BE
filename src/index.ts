@@ -11,7 +11,8 @@ const server = app.listen(PORT, () => {
 const io = new socketIo.Server(server, {
 	pingInterval: 60000,
 	cors: {
-		origin: process.env.FRONT_END_URL || "http://127.0.0.1:5173",
+		// origin: process.env.FRONT_END_URL || "http://127.0.0.1:5173",
+		origin: process.env.FRONT_END_URL,
 	},
 });
 
